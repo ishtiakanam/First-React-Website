@@ -3,6 +3,7 @@ import Card from '../Card/Card';
 import Product from '../Product/Product';
 import './Shop.css'
 import {addToDb, getStoredCart} from '../../utilities/fakedb'
+import { Link } from 'react-router-dom';
 
 const Shop = () => {
     const [products,setProducts] = useState([]);
@@ -37,7 +38,17 @@ const Shop = () => {
     },[products])
 
     const handleAddToCard = product =>{
-        const newCard =[...card, product]
+        const exits = card.find(pd => pd.key === product.key)
+        let newCard = []
+        if(exits){
+           const rest = card.filter(pd => pd.key !== product.key)
+           exits.quantity = exits.quantity + 1;
+           newCard = [...rest,product]
+        }
+        else{
+            product.quantity =1;
+            newCard = [...card,product]
+        }
         setCard(newCard)
         addToDb(product.key)
     }
@@ -64,7 +75,11 @@ const Shop = () => {
                 }
               </div>
             <div className="cart-container">
-                <Card card={card}></Card>
+                <Card card={card}>
+                    <Link to='/review'>
+                       <button className='btn-regular'>Review your order</button>
+                    </Link>
+                </Card>
             </div>
           </div>
         </div>
